@@ -88,12 +88,11 @@ def generate_spending_data(department: str) -> pd.DataFrame:
     np.random.seed(42 + len(department))
     months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]
     
-    # Use a generic mid-scale baseline profile for simulation data
     avg_monthly_target = 6500.0
     
     actual_spends = []
     for i, m in enumerate(months):
-        multiplier = 1.0 + (i * 0.12)  # Simulated spending increase over months
+        multiplier = 1.0 + (i * 0.12)  
         spend = np.random.uniform(avg_monthly_target * 0.9, avg_monthly_target * 1.3) * multiplier
         actual_spends.append(round(spend, 2))
         
@@ -107,7 +106,7 @@ with st.sidebar:
     # Department Switcher
     selected_dept = st.selectbox("Select Department Focus", list(DEFAULT_BUDGETS.keys()))
     
-    # MODIFIED: Team can now type in or adjust the budget limit directly!
+    # Adjustable budget container
     allocated_budget = st.number_input(
         "Set Custom Annual Budget ($)",
         min_value=1000.0,
@@ -119,7 +118,7 @@ with st.sidebar:
     
     st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
     
-    # Simulation Tool: What-if slider to manipulate trajectory adjustments live
+    # Simulation Tool: What-if slider
     burn_modifier = st.slider(
         "Simulated Spending Shift (%)", 
         min_value=-50, max_value=50, value=0, step=5,
@@ -230,11 +229,11 @@ fig.add_trace(go.Scatter(
     mode="lines"
 ))
 
-# Plot Horizontal Static Budget Boundary Cap line reference
+# FIXED: Forced float compliance and optimized Plotly string keys
 fig.add_trace(go.Scatter(
-    x=all_months, y=[allocated_budget]*12,
+    x=all_months, y=[float(allocated_budget)]*12,
     name="Total Budget Ceiling",
-    line=dict(color="rgba(239, 68, 68, 0.4)", width=2, style="dash"),
+    line=dict(color="rgba(239, 68, 68, 0.4)", width=2, dash="dash"),
     mode="lines",
     showlegend=True
 ))
